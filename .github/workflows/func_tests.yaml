@@ -1,0 +1,25 @@
+name: Functionality validation
+
+on:
+  pull_request_review:
+    types: [ submitted ]
+    branches: [ main ]
+
+jobs:
+  func:
+    name: Functional tests
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.review.state == 'approved'
+      || github.event.review.body == 'recheck'
+    steps:
+    - name: Checkout main branch
+      uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+    - name: Install snapcraft
+      uses: samuelmeuli/action-snapcraft@v1
+      with:
+        use_lxd: true
+    - name: Build and run functional tests
+      run: make functional
