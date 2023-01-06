@@ -8,6 +8,22 @@ metrics are expected to be used with prometheus.
 
 ## Snap Configuration
 
+The install hook (`./snap/hooks/install`) will generate a default configuration
+for the exporter. By default, the exporter is started at port 10000 with a
+logging level of INFO.
+
+You can change the default configuration by editing
+
+```bash
+$ /var/snap/prometheus-juju-backup-all-exporter/current/config.yaml
+```
+
+and then restart the snap by
+
+```bash
+$ sudo snap restart prometheus-juju-backup-all-exporter
+```
+
 ## Local Build and Testing
 
 You need `snapcraft` to build the snap:
