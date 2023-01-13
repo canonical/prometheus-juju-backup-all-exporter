@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from logging import getLogger
 
+from .utils import BackupState, BackupStats, get_result_code_name
+
 logger = getLogger(__name__)
 
 
@@ -98,6 +100,51 @@ class CollectorBase(ABC):
             yield metric
 
 
-#
-# TODO: implement the your custom collector
-#
+class BackupStateCollector(CollectorBase):
+    def __init__(self, config, *metrics):
+        """Initialize the class."""
+        super().__init__(*metrics)
+        self.config = config
+
+    def _fetch(self):
+        """User defined _fetch method used by `self._update_metrics()`."""
+        backup_state = BackupState(self.config)
+        return {
+            "failed_metric": [
+                {"labels": [], "value": float(backup_state.failed)},
+            ],
+            "purged_metric": [
+                {"labels": [], "value": float(backup_state.purged)},
+            ],
+            "completed_metric": [
+                {"labels": [], "value": float(backup_state.completed)},
+            ],
+        }
+
+
+class BackupStatsCollector(CollectorBase):
+    def __init__(self, config, *metrics):
+        """Initialize the class."""
+        super().__init__(*metrics)
+        self.config = config
+
+    def _fetch(self):
+        """User defined _fetch method used by `self._update_metrics()`."""
+        backup_stats = BackupStats(self.config)
+        return {
+            "duration_metric": [
+                {
+                    "labels": [
+                        str(int(backup_stats.status_ok)),
+                        get_result_code_name(backup_stats.result_code),
+                    ],
+                    "value": backup_stats.duration,
+                },
+            ],
+            "status_ok_metric": [
+                {
+                    "labels": [get_result_code_name(backup_stats.result_code)],
+                    "value": backup_stats.status_ok,
+                },
+            ],
+        }

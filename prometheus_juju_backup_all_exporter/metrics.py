@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from logging import getLogger
 
+from prometheus_client.core import CounterMetricFamily, GaugeMetricFamily
+
 logger = getLogger(__name__)
 
 
@@ -63,6 +65,70 @@ class MetricBase(ABC):
             self.add_metric(data["labels"], data["value"])
 
 
-#
-# TODO: implement the your custom metrics
-#
+class BackupDurationMetric(MetricBase, GaugeMetricFamily):
+    """The backup duration metric."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the metric class."""
+        super().__init__(*args, **kwargs)
+
+    def _process(self, data, old_sample={}):
+        """Return the backup duration as a metric."""
+        return data["duration_metric"]
+
+
+class BackupStatusOKMetric(MetricBase, GaugeMetricFamily):
+    """The backup status ok metric."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the metric class."""
+        super().__init__(*args, **kwargs)
+
+    def _process(self, data, old_sample={}):
+        """Return whether or not the command was okay as a metric."""
+        return data["status_ok_metric"]
+
+
+class BackupPurgedMetric(MetricBase, CounterMetricFamily):
+    """The backup expiration metric."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the metric class."""
+        super().__init__(*args, **kwargs)
+
+    def _process(self, data, old_sample={}):
+        """Return 1 if backup result file is expired, otherwise 0."""
+        metric_data = data["purged_metric"]
+        for d in metric_data:
+            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        return metric_data
+
+
+class BackupFailedMetric(MetricBase, CounterMetricFamily):
+    """The backup failures metric."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the metric class."""
+        super().__init__(*args, **kwargs)
+
+    def _process(self, data, old_sample={}):
+        """Increase the counter if backup failed."""
+        metric_data = data["failed_metric"]
+        for d in metric_data:
+            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        return metric_data
+
+
+class BackupCompletedMetric(MetricBase, CounterMetricFamily):
+    """The backup completed metric."""
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the metric class."""
+        super().__init__(*args, **kwargs)
+
+    def _process(self, data, old_sample={}):
+        """Increase the counter if backup succeed."""
+        metric_data = data["completed_metric"]
+        for d in metric_data:
+            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        return metric_data

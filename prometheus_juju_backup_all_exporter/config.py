@@ -12,6 +12,7 @@ DEFAULT_CONFIG = os.path.join(os.environ.get("SNAP_DATA", "./"), "config.yaml")
 class Config(BaseModel):
     port: int = 10000
     level: str = "DEBUG"
+    backup_path: str
 
     @validator("port")
     def validate_port_range(cls, port):  # noqa: N805
@@ -30,6 +31,14 @@ class Config(BaseModel):
             logger.error(msg)
             raise ValueError(msg)
         return level
+
+    @validator("backup_path")
+    def validate_backup_path(cls, backup_path):  # noqa: N805
+        if not os.path.isdir(backup_path):
+            msg = "Backup path must exists and is a directory."
+            logger.error(msg)
+            raise ValueError(msg)
+        return backup_path
 
     @classmethod
     def load_config(cls, config_file=DEFAULT_CONFIG):
