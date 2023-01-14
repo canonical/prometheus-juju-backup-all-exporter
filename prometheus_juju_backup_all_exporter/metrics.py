@@ -38,7 +38,7 @@ class MetricBase(ABC):
         Returns:
             processed data: list of dictionary
         """
-        pass
+        pass  # pragma: no cover
 
     @property
     def previous_data(self):
@@ -47,7 +47,7 @@ class MetricBase(ABC):
 
     def __hash__(self):
         """Return the hash of the custom metric."""
-        return hash(self.name)
+        return hash(self.name)  # pragma: no cover
 
     def add_samples(self, metric_data, old_sample={}):
         """Update the metric every time the exporter is queried."""
