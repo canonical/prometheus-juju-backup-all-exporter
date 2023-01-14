@@ -6,7 +6,7 @@ from yaml import safe_load
 
 logger = getLogger(__name__)
 
-DEFAULT_CONFIG = os.path.join(os.environ.get("SNAP_DATA"), "config.yaml")
+DEFAULT_CONFIG = os.path.join(os.environ.get("SNAP_DATA", "/"), "config.yaml")
 
 
 class Config(BaseModel):
