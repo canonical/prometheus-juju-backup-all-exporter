@@ -36,7 +36,7 @@ class SlientRequestHandler(WSGIRequestHandler):
 
     def log_message(self, format, *args):
         """Log nothing."""
-        pass
+        pass  # pragma: no cover
 
 
 class Exporter(object):

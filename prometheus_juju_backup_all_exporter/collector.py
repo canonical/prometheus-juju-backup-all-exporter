@@ -56,7 +56,7 @@ class CollectorBase(ABC):
     @abstractmethod
     def _fetch(self):
         """User defined _fetch method used by `self._update_metrics()`."""
-        pass
+        pass  # pragma: no cover
 
     def _update_metrics(self):
         """Create new metrics based on existing metrics."""
