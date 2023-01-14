@@ -1,7 +1,6 @@
 import argparse
 import logging
 
-from .collector import BackupStatusCollector
 from .config import DEFAULT_CONFIG, Config
 from .exporter import Exporter
 
@@ -34,13 +33,6 @@ def main():
     root_logger.setLevel(logging.getLevelName(config.level))
 
     exporter = Exporter(config.port)
-    exporter.register(
-        BackupStatusCollector(
-            "juju_backup_all_results",
-            "charm-juju-backup-all backup result.",
-            labels=[],
-        )
-    )
     exporter.run()
 
 
