@@ -4,7 +4,14 @@ from unittest.mock import Mock, patch
 import pytest
 from prometheus_client.samples import Sample
 
-from prometheus_juju_backup_all_exporter.metrics import MetricBase
+from prometheus_juju_backup_all_exporter.metrics import (
+    BackupCompletedMetric,
+    BackupDurationMetric,
+    BackupFailedMetric,
+    BackupPurgedMetric,
+    BackupStatusOKMetric,
+    MetricBase,
+)
 
 
 class TestMetricsBase(unittest.TestCase):
@@ -50,3 +57,90 @@ class TestMetricsBase(unittest.TestCase):
             labels.values()
         )
         assert list(self.test_subclass.previous_data.values())[0] == value
+
+
+class TestCustomMetrics:
+    """Custom metrics test class."""
+
+    def test_backup_duration_metric(self):
+        """Test backup duration metric class."""
+        duration_metric = BackupDurationMetric("metric_name", "documentation")
+
+        metric_data = []
+        returned_data = duration_metric._process({"duration_metric": metric_data})
+        assert returned_data == metric_data
+
+    def test_backup_status_ok_metric(self):
+        """Test backup status ok metric class."""
+        status_ok_metric = BackupStatusOKMetric("metric_name", "documentation")
+
+        metric_data = []
+        returned_data = status_ok_metric._process({"status_ok_metric": metric_data})
+        assert returned_data == metric_data
+
+    def test_backup_purged_metric(self):
+        """Test backup purged metric class."""
+        purged_metric = BackupPurgedMetric("metric_name", "documentation")
+
+        value = 0.0
+        labels = ["some_label"]
+        metric_data = [{"labels": labels, "value": value}]
+        returned_data = purged_metric._process({"purged_metric": metric_data})
+        assert returned_data == metric_data
+
+        value = 0.0
+        pre_value = 2.0
+        labels = ["some_label"]
+        old_sample = {tuple(labels): pre_value}
+        metric_data = [{"labels": labels, "value": value}]
+        expected_metric_data = [{"labels": labels, "value": value + pre_value}]
+        returned_data = purged_metric._process(
+            {"purged_metric": metric_data}, old_sample
+        )
+        assert returned_data == expected_metric_data
+
+    def test_backup_failed_metric(self):
+        """Test backup failed metric class."""
+        failed_metric = BackupFailedMetric("metric_name", "documentation")
+
+        # test without old_sample
+        value = 0.0
+        labels = ["some_label"]
+        metric_data = [{"labels": labels, "value": value}]
+        returned_data = failed_metric._process({"failed_metric": metric_data})
+        assert returned_data == metric_data
+
+        # test with old_sample
+        value = 0.0
+        pre_value = 2.0
+        labels = ["some_label"]
+        old_sample = {tuple(labels): pre_value}
+        metric_data = [{"labels": labels, "value": value}]
+        expected_metric_data = [{"labels": labels, "value": value + pre_value}]
+        returned_data = failed_metric._process(
+            {"failed_metric": metric_data}, old_sample
+        )
+        assert returned_data == expected_metric_data
+
+    def test_backup_completed_metric(self):
+        """Test backup completed metric class."""
+        completed_metric = BackupCompletedMetric("metric_name", "documentation")
+
+        # test without old_sample
+        value = 0.0
+        labels = ["some_label"]
+        metric_data = [{"labels": labels, "value": value}]
+        returned_data = completed_metric._process({"completed_metric": metric_data})
+        assert returned_data == metric_data
+
+        # test with old_sample
+        value = 0.0
+        pre_value = 2.0
+        labels = ["some_label"]
+        old_sample = {tuple(labels): pre_value}
+        metric_data = [{"labels": labels, "value": value}]
+        expected_metric_data = [{"labels": labels, "value": value + pre_value}]
+        returned_data = completed_metric._process(
+            {"completed_metric": metric_data}, old_sample
+        )
+        assert returned_data == expected_metric_data
