@@ -25,7 +25,7 @@ def test_get_result_code_name(test_input, expected):
     assert get_result_code_name(test_input) == expected
 
 
-class TestBacupStats(unittest.TestCase):
+class TestBackupStats(unittest.TestCase):
     """BacupStats test class."""
 
     @classmethod
@@ -83,8 +83,8 @@ class TestBacupStats(unittest.TestCase):
         assert backup_stats.result_code == result_code
 
 
-class TestBackupStats(unittest.TestCase):
-    """BackupStats test class."""
+class TestBackupState(unittest.TestCase):
+    """BackupState test class."""
 
     @classmethod
     def setUpClass(cls):
