@@ -37,28 +37,28 @@ class TestBackupStats(unittest.TestCase):
     def tearDownClass(cls):
         cls.patch_open.stop()
 
-    @patch.object(BackupStats, "_set_properties")
     @patch.object(config, "Config")
-    def test_backup_stats_not_exists(self, mock_config, mock_set_properties):
-        """Test backup stats not exists."""
+    def test_backup_stats_not_exists(self, mock_config):
+        """Test backup stats not exists and set default stats."""
         mock_config.backup_path = "non-existing-backup-path"
-        BackupStats(mock_config)
-        mock_set_properties.assert_called()
+        backup_stats = BackupStats(mock_config)
+        self.assertEqual(backup_stats.duration, 0)
+        self.assertEqual(backup_stats.status_ok, 0)
+        self.assertEqual(backup_stats.result_code, 3)
 
-    @patch.object(BackupStats, "_set_default_stats")
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
     @patch.object(config, "Config")
-    def test_backup_stats_error(
-        self, mock_config, mock_json_load, mock_pathlib_path, mock_set_default_stats
-    ):
+    def test_backup_stats_error(self, mock_config, mock_json_load, mock_pathlib_path):
         """Test backup stats error and set default stats."""
         mock_path = Mock()
         mock_path.exists.return_value = True
         mock_pathlib_path.return_value = mock_path
         mock_json_load.return_value = {"random_data": 123}
-        BackupStats(mock_config)
-        mock_set_default_stats.assert_called()
+        backup_stats = BackupStats(mock_config)
+        self.assertEqual(backup_stats.duration, 0)
+        self.assertEqual(backup_stats.status_ok, 0)
+        self.assertEqual(backup_stats.result_code, 3)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
@@ -76,11 +76,10 @@ class TestBackupStats(unittest.TestCase):
             "status_ok": status_ok,
             "result_code": result_code,
         }
-
         backup_stats = BackupStats(mock_config)
-        assert backup_stats.duration == duration
-        assert backup_stats.status_ok == status_ok
-        assert backup_stats.result_code == result_code
+        self.assertEqual(backup_stats.duration, duration)
+        self.assertEqual(backup_stats.status_ok, status_ok)
+        self.assertEqual(backup_stats.result_code, result_code)
 
 
 class TestBackupState(unittest.TestCase):
@@ -95,29 +94,28 @@ class TestBackupState(unittest.TestCase):
     def tearDownClass(cls):
         cls.patch_open.stop()
 
-    @patch.object(BackupState, "_set_properties")
     @patch.object(config, "Config")
-    def test_backup_state_not_exists(self, mock_config, mock_set_properties):
+    def test_backup_state_not_exists(self, mock_config):
         """Test backup state not exists."""
         mock_config.backup_path = "random"
-        BackupState(mock_config)
-        mock_set_properties.assert_called()
+        backup_state = BackupState(mock_config)
+        self.assertEqual(backup_state.failed, 0)
+        self.assertEqual(backup_state.purged, 0)
+        self.assertEqual(backup_state.completed, 0)
 
-    @patch.object(BackupState, "_set_default_state")
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
     @patch.object(config, "Config")
-    def test_backup_state_error(
-        self, mock_config, mock_json_load, mock_pathlib_path, mock_set_default_state
-    ):
+    def test_backup_state_error(self, mock_config, mock_json_load, mock_pathlib_path):
         """Test backup state error."""
         mock_path = Mock()
         mock_path.exists.return_value = True
         mock_pathlib_path.return_value = mock_path
         mock_json_load.return_value = {"random_data": 123}
-
-        BackupState(mock_config)
-        mock_set_default_state.assert_called()
+        backup_state = BackupState(mock_config)
+        self.assertEqual(backup_state.failed, 0)
+        self.assertEqual(backup_state.purged, 0)
+        self.assertEqual(backup_state.completed, 0)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
@@ -135,8 +133,7 @@ class TestBackupState(unittest.TestCase):
             "failed": failed,
             "purged": purged,
         }
-
         backup_state = BackupState(mock_config)
-        assert backup_state.completed == completed
-        assert backup_state.failed == failed
-        assert backup_state.purged == purged
+        self.assertEqual(backup_state.failed, failed)
+        self.assertEqual(backup_state.purged, purged)
+        self.assertEqual(backup_state.completed, completed)

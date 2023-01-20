@@ -20,8 +20,29 @@ class BackupStats:
     """A class representing backup statistic file."""
 
     def __init__(self, config):
-        """Initialize class."""
-        self.set_properties(Path(config.backup_path, "backup_stats.json"))
+        """Initialize and set instance properties."""
+        self._duration = 0
+        self._status_ok = 0
+        self._result_code = 3  # unknown
+        stats_file = Path(config.backup_path, "backup_stats.json")
+        try:
+            if not stats_file.exists():
+                logger.error(
+                    "Backup stats file: %s does not exist, using default values.",
+                    str(stats_file),
+                )
+            else:
+                with open(stats_file, "r") as f:
+                    backup_stats = json.load(f)
+                    self._duration = backup_stats["duration"]
+                    self._status_ok = backup_stats["status_ok"]
+                    self._result_code = backup_stats["result_code"]
+        except Exception as e:
+            logger.error(
+                "Invalid backup stats file: %s. %s. Using default values.",
+                str(stats_file),
+                str(e),
+            )
 
     @property
     def duration(self):
@@ -35,66 +56,31 @@ class BackupStats:
     def result_code(self):
         return self._result_code
 
-    def set_properties(self, stats_file):
-        """Set the instance properties."""
-        try:
-            if not stats_file.exists():
-                logger.error(
-                    "Backup stats file: %s does not exist, setting to default values.",
-                    str(stats_file),
-                )
-                self._set_default_stats()
-            else:
-                with open(stats_file, "r") as f:
-                    backup_stats = json.load(f)
-                    self._set_properties(backup_stats)
-        except Exception as e:
-            logger.error(
-                "Invalid backup stats file: %s. %s. Setting to default values",
-                str(stats_file),
-                str(e),
-            )
-            self._set_default_stats()
-
-    def _set_default_stats(self):
-        self._set_properties(
-            {
-                "duration": 0,
-                "status_ok": 0,
-                "result_code": 3,  # unknown
-            }
-        )
-
-    def _set_properties(self, result):
-        self._duration = result["duration"]
-        self._status_ok = result["status_ok"]
-        self._result_code = result["result_code"]
-
 
 class BackupState:
     """A class representing backup state file."""
 
     def __init__(self, config):
-        """Initialize class."""
-        self.set_properties(Path(config.backup_path, "backup_state.json"))
-
-    def set_properties(self, state_file):
-        """Set the instance properties and remove the file."""
+        """Initialize and set instance properties."""
+        self._failed = 0
+        self._purged = 0
+        self._completed = 0
+        state_file = Path(config.backup_path, "backup_state.json")
         try:
             if not state_file.exists():
                 logger.warning(
-                    "Backup state file: %s does not exist, setting to default values.",
+                    "Backup state file: %s does not exist, using default values.",
                     str(state_file),
                 )
-                self._set_default_state()
             else:
                 with open(state_file, "r") as f:
                     state = json.load(f)
-                    self._set_properties(state)
+                    self._failed = state["failed"]
+                    self._purged = state["purged"]
+                    self._completed = state["completed"]
         except Exception as e:
-            self._set_default_state()
             logger.error(
-                "Invalid backup command result file: %s. %s",
+                "Invalid backup state file: %s. %s. Using default values.",
                 str(state_file),
                 str(e),
             )
@@ -114,17 +100,3 @@ class BackupState:
     @property
     def purged(self):
         return self._purged
-
-    def _set_properties(self, result):
-        self._failed = result["failed"]
-        self._purged = result["purged"]
-        self._completed = result["completed"]
-
-    def _set_default_state(self):
-        self._set_properties(
-            {
-                "failed": 0.0,
-                "purged": 0.0,
-                "completed": 0.0,
-            }
-        )
