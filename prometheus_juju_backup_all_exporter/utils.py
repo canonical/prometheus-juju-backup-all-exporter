@@ -4,6 +4,14 @@ from pathlib import Path
 
 logger = getLogger(__name__)
 
+DEFAULT_DURATION = 0
+DEFAULT_STATUS_OK = 0
+DEFAULT_RESULT_CODE = 3  # unknown
+
+DEFAULT_PURGED = 0
+DEFAULT_FAILED = 0
+DEFAULT_COMPLETED = 0
+
 
 def get_result_code_name(result_code):
     result_code = int(result_code)
@@ -21,9 +29,9 @@ class BackupStats:
 
     def __init__(self, config):
         """Initialize and set instance properties."""
-        self._duration = 0
-        self._status_ok = 0
-        self._result_code = 3  # unknown
+        self._duration = DEFAULT_DURATION
+        self._status_ok = DEFAULT_STATUS_OK
+        self._result_code = DEFAULT_RESULT_CODE
         stats_file = Path(config.backup_path, "backup_stats.json")
         try:
             if not stats_file.exists():
@@ -62,9 +70,9 @@ class BackupState:
 
     def __init__(self, config):
         """Initialize and set instance properties."""
-        self._failed = 0
-        self._purged = 0
-        self._completed = 0
+        self._failed = DEFAULT_FAILED
+        self._purged = DEFAULT_PURGED
+        self._completed = DEFAULT_COMPLETED
         state_file = Path(config.backup_path, "backup_state.json")
         try:
             if not state_file.exists():

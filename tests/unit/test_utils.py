@@ -42,9 +42,9 @@ class TestBackupStats(unittest.TestCase):
         """Test backup stats not exists and set default stats."""
         mock_config.backup_path = "non-existing-backup-path"
         backup_stats = BackupStats(mock_config)
-        self.assertEqual(backup_stats.duration, 0)
-        self.assertEqual(backup_stats.status_ok, 0)
-        self.assertEqual(backup_stats.result_code, 3)
+        self.assertEqual(backup_stats.duration, utils.DEFAULT_DURATION)
+        self.assertEqual(backup_stats.status_ok, utils.DEFAULT_STATUS_OK)
+        self.assertEqual(backup_stats.result_code, utils.DEFAULT_RESULT_CODE)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
@@ -56,9 +56,9 @@ class TestBackupStats(unittest.TestCase):
         mock_pathlib_path.return_value = mock_path
         mock_json_load.return_value = {"random_data": 123}
         backup_stats = BackupStats(mock_config)
-        self.assertEqual(backup_stats.duration, 0)
-        self.assertEqual(backup_stats.status_ok, 0)
-        self.assertEqual(backup_stats.result_code, 3)
+        self.assertEqual(backup_stats.duration, utils.DEFAULT_DURATION)
+        self.assertEqual(backup_stats.status_ok, utils.DEFAULT_STATUS_OK)
+        self.assertEqual(backup_stats.result_code, utils.DEFAULT_RESULT_CODE)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
@@ -99,9 +99,9 @@ class TestBackupState(unittest.TestCase):
         """Test backup state not exists."""
         mock_config.backup_path = "random"
         backup_state = BackupState(mock_config)
-        self.assertEqual(backup_state.failed, 0)
-        self.assertEqual(backup_state.purged, 0)
-        self.assertEqual(backup_state.completed, 0)
+        self.assertEqual(backup_state.failed, utils.DEFAULT_FAILED)
+        self.assertEqual(backup_state.purged, utils.DEFAULT_PURGED)
+        self.assertEqual(backup_state.completed, utils.DEFAULT_COMPLETED)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
@@ -113,9 +113,9 @@ class TestBackupState(unittest.TestCase):
         mock_pathlib_path.return_value = mock_path
         mock_json_load.return_value = {"random_data": 123}
         backup_state = BackupState(mock_config)
-        self.assertEqual(backup_state.failed, 0)
-        self.assertEqual(backup_state.purged, 0)
-        self.assertEqual(backup_state.completed, 0)
+        self.assertEqual(backup_state.failed, utils.DEFAULT_FAILED)
+        self.assertEqual(backup_state.purged, utils.DEFAULT_PURGED)
+        self.assertEqual(backup_state.completed, utils.DEFAULT_COMPLETED)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
