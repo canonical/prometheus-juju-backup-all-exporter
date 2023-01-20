@@ -1,5 +1,6 @@
 from unittest.mock import Mock, patch
 
+from prometheus_juju_backup_all_exporter import __main__
 from prometheus_juju_backup_all_exporter.__main__ import main, parse_command_line
 
 
@@ -11,9 +12,9 @@ class TestCli:
         parse_command_line()
         mock_argument_parser.assert_called_once()
 
-    @patch("prometheus_juju_backup_all_exporter.__main__.parse_command_line")
-    @patch("prometheus_juju_backup_all_exporter.__main__.Exporter")
-    @patch("prometheus_juju_backup_all_exporter.__main__.Config")
+    @patch.object(__main__, "parse_command_line")
+    @patch.object(__main__, "Exporter")
+    @patch.object(__main__, "Config")
     @patch("logging.getLevelName")
     def test_cli_main(
         self,

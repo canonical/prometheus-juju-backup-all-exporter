@@ -59,7 +59,13 @@ class CollectorBase(ABC):
         pass  # pragma: no cover
 
     def _update_metrics(self):
-        """Create new metrics based on existing metrics."""
+        """Create new metrics based on existing metrics.
+
+        This is an internally used function to fetch new samples from the user
+        defined `_fetch()` method, and create new metrics based on the new
+        samples and the existing metric classes. The internal properties of
+        `_metrics` will be updated every time this internal function is called.
+        """
         data = self._fetch()
         new_metrics = []
         for metric in self._metrics:
@@ -71,7 +77,15 @@ class CollectorBase(ABC):
         self._metrics = new_metrics
 
     def collect(self):
-        """Scrape data that will be used by prometheus_client when the exporter is queried."""
+        """Fetch data and update the internal metrics.
+
+        This is a callback method that is used internally within
+        `prometheus_client` every time the exporter server is queried. There is
+        not return values for this method but it needs to yield all the metrics.
+
+        Yields:
+            metrics: the internal metrics.
+        """
         self._update_metrics()
         for metric in self._metrics:
             yield metric

@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 """Test exporter snap."""
-from subprocess import check_call, run
+import os
+from subprocess import run
 
 SNAP_NAME = "prometheus-juju-backup-all-exporter"
 
 
 def test_default_config_installed(snap_config):
-    """Check if the snap default config is in active state."""
-    assert check_call(f"ls {snap_config}".split()) == 0
+    """Check if the snap default config exists."""
+    assert os.path.exists(snap_config)
 
 
 def test_snap_active(snap_name):
