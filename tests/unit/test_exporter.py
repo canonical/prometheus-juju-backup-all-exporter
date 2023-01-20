@@ -1,14 +1,15 @@
 from unittest.mock import Mock, patch
 
+from prometheus_juju_backup_all_exporter import exporter
 from prometheus_juju_backup_all_exporter.exporter import Exporter
 
 
 class TestExporter:
     """Exporter test class."""
 
-    @patch("prometheus_juju_backup_all_exporter.exporter.threading")
-    @patch("prometheus_juju_backup_all_exporter.exporter.REGISTRY")
-    @patch("prometheus_juju_backup_all_exporter.exporter.make_server")
+    @patch.object(exporter, "threading")
+    @patch.object(exporter, "REGISTRY")
+    @patch.object(exporter, "make_server")
     def test_exporter(self, mock_make_server, mock_registry, mock_threading):
         exporter = Exporter(10000)
         exporter.register(Mock())

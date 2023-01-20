@@ -1,48 +1,39 @@
+import unittest
 from unittest.mock import Mock, patch
 
 import pytest
 
-import prometheus_juju_backup_all_exporter
 from prometheus_juju_backup_all_exporter.collector import CollectorBase
 
 
-class TestCollector:
-    """Collector test class."""
+class TestCollectorBase(unittest.TestCase):
+    """Collector base test class."""
 
-    def test_cannot_init_collector_base(self):
-        """Test cannot initialize CollectorBase."""
-        with pytest.raises(TypeError):
-            CollectorBase()
-
-    @patch.object(
-        prometheus_juju_backup_all_exporter.collector.CollectorBase,
-        "__abstractmethods__",
-        set(),
-    )
-    def test_collector_base_class_collect(self):
-        """Test collector base class's collect method."""
-        mock_metric = Mock()
-        mock_metric.add_samples = Mock()
-        subclass = CollectorBase(mock_metric)
-        subclass._update_metrics = Mock()
-
-        list(subclass.collect())  # need list() because it's a generator
-
-        subclass._update_metrics.assert_called()
-
-    @patch.object(
-        prometheus_juju_backup_all_exporter.collector.CollectorBase,
-        "__abstractmethods__",
-        set(),
-    )
-    def test_collector_base_class_update_metrics(self):
-        """Test collector base class's _update_metrics() method."""
+    def setUp(self):
+        self.patch_abstract_method = patch.object(
+            CollectorBase, "__abstractmethods__", set()
+        )
+        self.patch_abstract_method.start()
         mock_metric = Mock()
         mock_metric.__class__ = Mock()
         mock_metric.add_samples = Mock()
+        self.test_subclass = CollectorBase(mock_metric)
+        self.addCleanup(self.patch_abstract_method.stop)
 
-        subclass = CollectorBase(mock_metric)
-        subclass._fetch = Mock()
-        subclass._update_metrics()
+    def test_cannot_init_collector_base(self):
+        """Test cannot initialize CollectorBase."""
+        self.patch_abstract_method.stop()
+        with pytest.raises(TypeError):
+            CollectorBase()
 
-        subclass._fetch.assert_called()
+    def test_collector_base_class_collect(self):
+        """Test collector base class's collect method."""
+        self.test_subclass._update_metrics = Mock()
+        list(self.test_subclass.collect())  # need list() because it's a generator
+        self.test_subclass._update_metrics.assert_called()
+
+    def test_collector_base_class_update_metrics(self):
+        """Test collector base class's _update_metrics() method."""
+        self.test_subclass._fetch = Mock()
+        self.test_subclass._update_metrics()
+        self.test_subclass._fetch.assert_called()

@@ -1,41 +1,48 @@
-from unittest.mock import mock_open, patch
+import unittest
+from unittest.mock import patch
 
 import pytest
 
 from prometheus_juju_backup_all_exporter.__main__ import Config
 
 
-class TestConfig:
+class TestConfig(unittest.TestCase):
     """Config test class."""
 
-    @patch("os.path.exists")
-    @patch("prometheus_juju_backup_all_exporter.config.safe_load")
-    def test_valid_config(self, mock_safe_load, mock_path_exists):
-        """Test valid config."""
-        mock_path_exists.return_value = True
-        with patch("builtins.open", new_callable=mock_open):
-            mock_safe_load.return_value = {
-                "port": 10000,
-                "level": "INFO",
-            }
-            config = Config.load_config()
-            assert config.port == 10000
-            assert config.level == "INFO"
+    def setUp(self):
+        self.patch_open_file = patch("builtins.open")
+        self.patch_os_path_exists = patch("os.path.exists", return_value=True)
+        self.patch_open_file.start()
+        self.patch_os_path_exists.start()
 
-    @patch("os.path.exists")
+    def tearDown(self):
+        self.patch_open_file.stop()
+        self.patch_os_path_exists.stop()
+
     @patch("prometheus_juju_backup_all_exporter.config.safe_load")
-    def test_invalid_config(self, mock_safe_load, mock_path_exists):
+    def test_valid_config(self, mock_safe_load):
+        """Test valid config."""
+        mock_safe_load.return_value = {
+            "port": 10000,
+            "level": "INFO",
+        }
+        config = Config.load_config()
+        assert config.port == 10000
+        assert config.level == "INFO"
+
+    @patch("prometheus_juju_backup_all_exporter.config.safe_load")
+    def test_invalid_config(self, mock_safe_load):
         """Test invalid config."""
-        mock_path_exists.return_value = True
-        with patch("builtins.open", new_callable=mock_open):
-            mock_safe_load.return_value = {
-                "port": -10000,
-                "level": "RANDOM",
-            }
-            with pytest.raises(ValueError):
-                Config.load_config()
+        mock_safe_load.return_value = {
+            "port": -10000,
+            "level": "RANDOM",
+        }
+        with pytest.raises(ValueError):
+            Config.load_config()
 
     def test_missing_config(self):
         """Test missing config."""
+        self.patch_open_file.stop()
+        self.patch_os_path_exists.stop()
         with pytest.raises(ValueError):
             Config.load_config("random")
