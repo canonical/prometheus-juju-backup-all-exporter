@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import random
 import time
 from pathlib import Path
 from subprocess import check_call
@@ -35,19 +36,20 @@ def available_metric_names():
 
 @pytest.fixture(scope="session")
 def backup_stats_data():
+    random_result_code = random.choice(range(4))
     return {
-        "duration": 100,
-        "status_ok": 0,
-        "result_code": 3,
+        "duration": random.random() * 100,
+        "status_ok": random_result_code != 1,
+        "result_code": random_result_code,
     }
 
 
 @pytest.fixture(scope="session")
 def backup_state_data():
     return {
-        "failed": 10,
-        "purged": 3,
-        "completed": 1,
+        "failed": random.randint(0, 10),
+        "purged": random.randint(0, 10),
+        "completed": random.randint(0, 10),
     }
 
 
