@@ -67,7 +67,7 @@ class TestCustomMetrics:
         duration_metric = BackupDurationMetric("metric_name", "documentation")
 
         metric_data = []
-        returned_data = duration_metric._process({"duration_metric": metric_data})
+        returned_data = duration_metric._process({"duration_metric": metric_data}, {})
         assert returned_data == metric_data
 
     def test_backup_status_ok_metric(self):
@@ -75,7 +75,7 @@ class TestCustomMetrics:
         status_ok_metric = BackupStatusOKMetric("metric_name", "documentation")
 
         metric_data = []
-        returned_data = status_ok_metric._process({"status_ok_metric": metric_data})
+        returned_data = status_ok_metric._process({"status_ok_metric": metric_data}, {})
         assert returned_data == metric_data
 
     def test_backup_purged_metric(self):
@@ -85,7 +85,7 @@ class TestCustomMetrics:
         value = 0.0
         labels = ["some_label"]
         metric_data = [{"labels": labels, "value": value}]
-        returned_data = purged_metric._process({"purged_metric": metric_data})
+        returned_data = purged_metric._process({"purged_metric": metric_data}, {})
         assert returned_data == metric_data
 
         value = 0.0
@@ -107,7 +107,7 @@ class TestCustomMetrics:
         value = 0.0
         labels = ["some_label"]
         metric_data = [{"labels": labels, "value": value}]
-        returned_data = failed_metric._process({"failed_metric": metric_data})
+        returned_data = failed_metric._process({"failed_metric": metric_data}, {})
         assert returned_data == metric_data
 
         # test with old_sample
@@ -130,7 +130,7 @@ class TestCustomMetrics:
         value = 0.0
         labels = ["some_label"]
         metric_data = [{"labels": labels, "value": value}]
-        returned_data = completed_metric._process({"completed_metric": metric_data})
+        returned_data = completed_metric._process({"completed_metric": metric_data}, {})
         assert returned_data == metric_data
 
         # test with old_sample

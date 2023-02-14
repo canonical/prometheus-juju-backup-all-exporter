@@ -72,7 +72,7 @@ class BackupDurationMetric(MetricBase, GaugeMetricFamily):
         """Initialize the metric class."""
         super().__init__(*args, **kwargs)
 
-    def _process(self, data, old_sample={}):
+    def _process(self, data, old_sample):
         """Return the backup duration as a metric."""
         return data["duration_metric"]
 
@@ -84,7 +84,7 @@ class BackupStatusOKMetric(MetricBase, GaugeMetricFamily):
         """Initialize the metric class."""
         super().__init__(*args, **kwargs)
 
-    def _process(self, data, old_sample={}):
+    def _process(self, data, old_sample):
         """Return whether or not the command was okay as a metric."""
         return data["status_ok_metric"]
 
@@ -96,7 +96,7 @@ class BackupPurgedMetric(MetricBase, CounterMetricFamily):
         """Initialize the metric class."""
         super().__init__(*args, **kwargs)
 
-    def _process(self, data, old_sample={}):
+    def _process(self, data, old_sample):
         """Return 1 if backup result file is expired, otherwise 0."""
         metric_data = data["purged_metric"]
         for d in metric_data:
@@ -111,7 +111,7 @@ class BackupFailedMetric(MetricBase, CounterMetricFamily):
         """Initialize the metric class."""
         super().__init__(*args, **kwargs)
 
-    def _process(self, data, old_sample={}):
+    def _process(self, data, old_sample):
         """Increase the counter if backup failed."""
         metric_data = data["failed_metric"]
         for d in metric_data:
@@ -126,7 +126,7 @@ class BackupCompletedMetric(MetricBase, CounterMetricFamily):
         """Initialize the metric class."""
         super().__init__(*args, **kwargs)
 
-    def _process(self, data, old_sample={}):
+    def _process(self, data, old_sample):
         """Increase the counter if backup succeed."""
         metric_data = data["completed_metric"]
         for d in metric_data:
