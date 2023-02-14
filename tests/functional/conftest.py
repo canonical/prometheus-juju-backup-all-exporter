@@ -8,7 +8,7 @@ from subprocess import check_call
 import pytest
 
 TMP_DIR = "/tmp"
-DELAY_TEST = 5
+SETUP_TIMEOUT = 5
 
 
 def prepare_sample_data(data, dest):
@@ -93,8 +93,14 @@ def setup_snap(snap_name, snap_common_dir, backup_stats_data, backup_state_data)
             snap_name,
         )
 
-    # This is the key for `curl xxx` to work!
-    time.sleep(DELAY_TEST)
+    down = 1
+    stime = time.time()
+    while time.time() - stime < SETUP_TIMEOUT and down:
+        try:
+            down = check_call("curl http://localhost:10000".split())
+        except Exception:
+            time.sleep(0.5)
+    assert not down, "Snap is not up."
 
     yield test_snap
 
