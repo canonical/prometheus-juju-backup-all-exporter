@@ -36,7 +36,10 @@ class MetricBase(ABC):
             old_sample: previous metric sample, useful when implementing counter.
 
         Returns:
-            processed data: list of dictionary
+            processed data: list of dictionary containing 'labels' (list of str) and 'value' (float).
+
+        Examples:
+            returned_processed_data = [{"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}]
         """
         pass  # pragma: no cover
 
@@ -49,9 +52,14 @@ class MetricBase(ABC):
         """Return the hash of the custom metric."""
         return hash(self.name)  # pragma: no cover
 
-    def add_samples(self, metric_data, old_sample={}):
-        """Update the metric every time the exporter is queried."""
-        for data in self._process(metric_data, old_sample):
+    def add_samples(self, metric_data, old_sample=None):
+        """Update the metric every time the exporter is queried (internal use).
+
+        Args:
+            metric_data: the external data to be passed to custom `_process` function.
+            old_sample: previous metric sample to be passed to custom `_process` function.
+        """
+        for data in self._process(metric_data, old_sample or {}):
             self.add_metric(data["labels"], data["value"])
 
 
