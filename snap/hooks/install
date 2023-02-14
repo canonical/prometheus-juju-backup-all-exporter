@@ -5,4 +5,5 @@
 cat <<EOF > $SNAP_DATA/config.yaml
 port: 10000
 level: INFO
+backup_path: $SNAP_COMMON
 EOF

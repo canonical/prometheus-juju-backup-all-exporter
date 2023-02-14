@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install tox
+        python -m pip install "tox < 4" #tox has breaking changes in major version 4
     - name: Run lint tests
       run: make lint
     - name: Run unit tests
