@@ -55,7 +55,14 @@ class CollectorBase(ABC):
 
     @abstractmethod
     def _fetch(self):
-        """User defined _fetch method used by `self._update_metrics()`."""
+        """User defined _fetch method used by `self._update_metrics()`.
+
+        Return:
+            fetched data as a list of dictionary.
+
+        Examples:
+            returned_fetched_data = [{"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}]
+        """
         pass  # pragma: no cover
 
     def _update_metrics(self):
