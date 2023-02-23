@@ -39,7 +39,7 @@ def backup_stats_data():
     random_result_code = random.choice(range(4))
     return {
         "duration": random.random() * 100,
-        "status_ok": float(random_result_code == 0),
+        "status_ok": random_result_code == 0,
         "result_code": random_result_code,
     }
 
