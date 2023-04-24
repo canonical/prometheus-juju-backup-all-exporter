@@ -1,3 +1,5 @@
+"""Module for loading j-b-a related metrics."""
+
 import json
 from logging import getLogger
 from pathlib import Path
@@ -14,6 +16,7 @@ DEFAULT_COMPLETED = 0
 
 
 def get_result_code_name(result_code):
+    """Map result_code to nagio-like string."""
     result_code = int(result_code)
     status_name = {
         0: "StatusOK",
@@ -40,28 +43,31 @@ class BackupStats:
                     str(stats_file),
                 )
             else:
-                with open(stats_file, "r") as f:
-                    backup_stats = json.load(f)
+                with open(stats_file, "r", encoding="utf-8") as stats:
+                    backup_stats = json.load(stats)
                     self._duration = backup_stats["duration"]
                     self._status_ok = backup_stats["status_ok"]
                     self._result_code = backup_stats["result_code"]
-        except Exception as e:
+        except (KeyError, PermissionError, json.decoder.JSONDecodeError) as err:
             logger.error(
                 "Invalid backup stats file: %s. %s. Using default values.",
                 str(stats_file),
-                str(e),
+                str(err),
             )
 
     @property
     def duration(self):
+        """Return backup duration."""
         return self._duration
 
     @property
     def status_ok(self):
+        """Return if backup status is okay or not."""
         return self._status_ok
 
     @property
     def result_code(self):
+        """Return backup result code."""
         return self._result_code
 
 
@@ -81,16 +87,16 @@ class BackupState:
                     str(state_file),
                 )
             else:
-                with open(state_file, "r") as f:
-                    state = json.load(f)
-                    self._failed = state["failed"]
-                    self._purged = state["purged"]
-                    self._completed = state["completed"]
-        except Exception as e:
+                with open(state_file, "r", encoding="utf-8") as state:
+                    backup_state = json.load(state)
+                    self._failed = backup_state["failed"]
+                    self._purged = backup_state["purged"]
+                    self._completed = backup_state["completed"]
+        except (KeyError, PermissionError, json.decoder.JSONDecodeError) as err:
             logger.error(
                 "Invalid backup state file: %s. %s. Using default values.",
                 str(state_file),
-                str(e),
+                str(err),
             )
         finally:
             if state_file.exists():
@@ -99,12 +105,15 @@ class BackupState:
 
     @property
     def completed(self):
+        """Return backup completed counts."""
         return self._completed
 
     @property
     def failed(self):
+        """Return backup failed counts."""
         return self._failed
 
     @property
     def purged(self):
+        """Return backup purged counts."""
         return self._purged

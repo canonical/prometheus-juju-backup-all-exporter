@@ -1,3 +1,5 @@
+"""Module for j-b-a exporter."""
+
 import socket
 import threading
 from logging import getLogger
@@ -34,12 +36,11 @@ def _get_exporter_server(address, port):
 class SlientRequestHandler(WSGIRequestHandler):
     """A Slient Request handler."""
 
-    def log_message(self, format, *args):
+    def log_message(self, format, *args):  # pylint: disable=W0622
         """Log nothing."""
-        pass  # pragma: no cover
 
 
-class Exporter(object):
+class Exporter:
     """The exporter class."""
 
     def __init__(self, port, addr="0.0.0.0"):
@@ -66,9 +67,7 @@ class Exporter(object):
             self.server_class,
             handler_class=SlientRequestHandler,
         )
-        logger.info(
-            "Started promethesus juju-backup-all exporter at {}:{}.".format(self.addr, self.port)
-        )
-        t = threading.Thread(target=httpd.serve_forever)
-        t.daemon = daemon
-        t.start()
+        logger.info("Started promethesus juju-backup-all exporter at %s:%s.", self.addr, self.port)
+        thread = threading.Thread(target=httpd.serve_forever)
+        thread.daemon = daemon
+        thread.start()

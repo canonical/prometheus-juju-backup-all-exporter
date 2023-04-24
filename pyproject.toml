@@ -46,6 +46,9 @@ ignore-paths = [
   "tests",
 ]
 
+[tool.pylint.'MESSAGES CONTROL']
+extension-pkg-allow-list = "pydantic" # Fix pydantic issue in pylint, see https://github.com/pydantic/pydantic/issues/1961
+
 [tool.mypy]
 warn_unused_ignores = true
 warn_unused_configs = true

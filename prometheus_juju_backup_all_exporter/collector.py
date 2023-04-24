@@ -1,3 +1,5 @@
+"""Module for j-b-a collecter."""
+
 from abc import ABC, abstractmethod
 from logging import getLogger
 
@@ -6,7 +8,7 @@ from .utils import BackupState, BackupStats, get_result_code_name
 logger = getLogger(__name__)
 
 
-class CollectorBase(ABC):
+class CollectorBase(ABC):  # pylint: disable=R0903
     """Abstract base class for creating custom collector.
 
     All collector classes should add this class as a mixin class, and you
@@ -67,7 +69,6 @@ class CollectorBase(ABC):
                 {"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}
             ]
         """
-        pass  # pragma: no cover
 
     def _update_metrics(self):
         """Create new metrics based on existing metrics.
@@ -81,7 +82,9 @@ class CollectorBase(ABC):
         new_metrics = []
         for metric in self._metrics:
             new_metric = metric.__class__(
-                metric.name, metric.documentation, labels=metric._labelnames
+                metric.name,
+                metric.documentation,
+                labels=metric._labelnames,  # pylint: disable=W0212
             )
             new_metric.add_samples(data, metric.previous_data)
             new_metrics.append(new_metric)
@@ -102,7 +105,9 @@ class CollectorBase(ABC):
             yield metric
 
 
-class BackupStateCollector(CollectorBase):
+class BackupStateCollector(CollectorBase):  # pylint: disable=R0903
+    """Collector for backup state."""
+
     def __init__(self, config, *metrics):
         """Initialize the class."""
         super().__init__(*metrics)
@@ -124,7 +129,9 @@ class BackupStateCollector(CollectorBase):
         }
 
 
-class BackupStatsCollector(CollectorBase):
+class BackupStatsCollector(CollectorBase):  # pylint: disable=R0903
+    """Collector for backup stats."""
+
     def __init__(self, config, *metrics):
         """Initialize the class."""
         super().__init__(*metrics)

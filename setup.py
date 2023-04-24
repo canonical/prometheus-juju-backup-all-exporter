@@ -1,3 +1,5 @@
+"""Entrypoint for python package."""
+
 from setuptools import setup
 
 configs = {
@@ -16,10 +18,10 @@ configs = {
     },
 }
 
-with open("LICENSE") as f:
+with open("LICENSE", encoding="utf-8") as f:
     configs.update({"license": f.read()})
 
-with open("README.md") as f:
+with open("README.md", encoding="uft-8") as f:
     configs.update({"long_description": f.read()})
 
 

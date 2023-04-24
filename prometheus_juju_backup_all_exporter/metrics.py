@@ -1,3 +1,5 @@
+"""Module for custom j-b-a metrics."""
+
 from abc import ABC, abstractmethod
 from logging import getLogger
 
@@ -46,16 +48,18 @@ class MetricBase(ABC):
                 {"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}
             ]
         """
-        pass  # pragma: no cover
 
     @property
     def previous_data(self):
         """Return previous sample as a labels <-> value pair."""
-        return {tuple(sample.labels.values()): sample.value for sample in self.samples}
+        return {
+            tuple(sample.labels.values()): sample.value
+            for sample in self.samples  # pylint: disable=E1101
+        }
 
     def __hash__(self):
         """Return the hash of the custom metric."""
-        return hash(self.name)  # pragma: no cover
+        return hash(self.name)  # pragma: no cover, pylint: disable=E1101
 
     def add_samples(self, metric_data, old_sample=None):
         """Update the metric every time the exporter is queried (internal use).
@@ -65,7 +69,7 @@ class MetricBase(ABC):
             old_sample: previous metric sample to be passed to custom `_process` function.
         """
         for data in self._process(metric_data, old_sample or {}):
-            self.add_metric(data["labels"], data["value"])
+            self.add_metric(data["labels"], data["value"])  # pylint: disable=E1101
 
 
 class BackupDurationMetric(MetricBase, GaugeMetricFamily):
@@ -102,8 +106,8 @@ class BackupPurgedMetric(MetricBase, CounterMetricFamily):
     def _process(self, data, old_sample):
         """Return 1 if backup result file is expired, otherwise 0."""
         metric_data = data["purged_metric"]
-        for d in metric_data:
-            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        for _data in metric_data:
+            _data["value"] += old_sample.get(tuple(_data["labels"]), 0.0)
         return metric_data
 
 
@@ -117,8 +121,8 @@ class BackupFailedMetric(MetricBase, CounterMetricFamily):
     def _process(self, data, old_sample):
         """Increase the counter if backup failed."""
         metric_data = data["failed_metric"]
-        for d in metric_data:
-            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        for _data in metric_data:
+            _data["value"] += old_sample.get(tuple(_data["labels"]), 0.0)
         return metric_data
 
 
@@ -132,6 +136,6 @@ class BackupCompletedMetric(MetricBase, CounterMetricFamily):
     def _process(self, data, old_sample):
         """Increase the counter if backup succeed."""
         metric_data = data["completed_metric"]
-        for d in metric_data:
-            d["value"] += old_sample.get(tuple(d["labels"]), 0.0)
+        for _data in metric_data:
+            _data["value"] += old_sample.get(tuple(_data["labels"]), 0.0)
         return metric_data

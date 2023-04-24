@@ -1,3 +1,5 @@
+"""Module for j-b-a related configuration."""
+
 import os
 from logging import getLogger
 
@@ -10,12 +12,15 @@ DEFAULT_CONFIG = os.path.join(os.environ.get("SNAP_DATA", "./"), "config.yaml")
 
 
 class Config(BaseModel):
+    """Juju backup all configuration."""
+
     port: int = 10000
     level: str = "DEBUG"
     backup_path: str
 
     @validator("port")
-    def validate_port_range(cls, port):  # noqa: N805
+    def validate_port_range(cls, port):  # noqa: N805, pylint: disable=E0213
+        """Validate port range."""
         if not 1 <= port <= 65535:
             msg = "Port must be in [1, 65535]."
             logger.error(msg)
@@ -23,17 +28,19 @@ class Config(BaseModel):
         return port
 
     @validator("level")
-    def validate_level_choice(cls, level):  # noqa: N805
+    def validate_level_choice(cls, level):  # noqa: N805, pylint: disable=E0213
+        """Validate logging level choice."""
         level = level.upper()
         choices = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
         if level not in choices:
-            msg = "Level must be in {} (case-insensitive).".format(choices)
+            msg = f"Level must be in {choices} (case-insensitive)."
             logger.error(msg)
             raise ValueError(msg)
         return level
 
     @validator("backup_path")
-    def validate_backup_path(cls, backup_path):  # noqa: N805
+    def validate_backup_path(cls, backup_path):  # noqa: N805, pylint: disable=E0213
+        """Validate backup path."""
         if not os.path.isdir(backup_path):
             msg = "Backup path must exists and is a directory."
             logger.error(msg)
@@ -42,11 +49,12 @@ class Config(BaseModel):
 
     @classmethod
     def load_config(cls, config_file=DEFAULT_CONFIG):
+        """Load configuration file and validate it."""
         if not os.path.exists(config_file):
-            msg = "Configuration file: {} not exists.".format(config_file)
+            msg = f"Configuration file: {config_file} not exists."
             logger.error(msg)
             raise ValueError(msg)
-        with open(config_file, "r") as f:
-            logger.info("Loaded exporter configuration: {}.".format(config_file))
-            data = safe_load(f) or {}
+        with open(config_file, "r", encoding="utf-8") as config:
+            logger.info("Loaded exporter configuration: %s.", config_file)
+            data = safe_load(config) or {}
             return cls(**data)
