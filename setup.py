@@ -21,7 +21,7 @@ configs = {
 with open("LICENSE", encoding="utf-8") as f:
     configs.update({"license": f.read()})
 
-with open("README.md", encoding="uft-8") as f:
+with open("README.md", encoding="utf-8") as f:
     configs.update({"long_description": f.read()})
 
 

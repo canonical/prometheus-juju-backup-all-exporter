@@ -17,7 +17,7 @@ from .metrics import (
 root_logger = logging.getLogger()
 
 
-def parse_command_line():
+def parse_command_line() -> argparse.Namespace:
     """Command line parser.
 
     Parse command line arguments and return the arguments.
@@ -35,7 +35,7 @@ def parse_command_line():
     return args
 
 
-def main():
+def main() -> None:
     """Start the prometheus-juju-backup-all exporter."""
     args = parse_command_line()
     config = Config.load_config(config_file=args.config or DEFAULT_CONFIG)

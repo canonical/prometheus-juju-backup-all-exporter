@@ -4,6 +4,8 @@ import json
 from logging import getLogger
 from pathlib import Path
 
+from .config import Config
+
 logger = getLogger(__name__)
 
 DEFAULT_DURATION = 0
@@ -15,7 +17,7 @@ DEFAULT_FAILED = 0
 DEFAULT_COMPLETED = 0
 
 
-def get_result_code_name(result_code):
+def get_result_code_name(result_code: int) -> str:
     """Map result_code to nagio-like string."""
     result_code = int(result_code)
     status_name = {
@@ -30,7 +32,7 @@ def get_result_code_name(result_code):
 class BackupStats:
     """A class representing backup statistic file."""
 
-    def __init__(self, config):
+    def __init__(self, config: Config) -> None:
         """Initialize and set instance properties."""
         self._duration = DEFAULT_DURATION
         self._status_ok = DEFAULT_STATUS_OK
@@ -56,17 +58,17 @@ class BackupStats:
             )
 
     @property
-    def duration(self):
+    def duration(self) -> int:
         """Return backup duration."""
         return self._duration
 
     @property
-    def status_ok(self):
+    def status_ok(self) -> int:
         """Return if backup status is okay or not."""
         return self._status_ok
 
     @property
-    def result_code(self):
+    def result_code(self) -> int:
         """Return backup result code."""
         return self._result_code
 
@@ -74,7 +76,7 @@ class BackupStats:
 class BackupState:
     """A class representing backup state file."""
 
-    def __init__(self, config):
+    def __init__(self, config: Config) -> None:
         """Initialize and set instance properties."""
         self._failed = DEFAULT_FAILED
         self._purged = DEFAULT_PURGED
@@ -104,16 +106,16 @@ class BackupState:
                 state_file.unlink()
 
     @property
-    def completed(self):
+    def completed(self) -> int:
         """Return backup completed counts."""
         return self._completed
 
     @property
-    def failed(self):
+    def failed(self) -> int:
         """Return backup failed counts."""
         return self._failed
 
     @property
-    def purged(self):
+    def purged(self) -> int:
         """Return backup purged counts."""
         return self._purged

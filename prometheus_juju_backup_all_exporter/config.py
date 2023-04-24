@@ -19,7 +19,7 @@ class Config(BaseModel):
     backup_path: str
 
     @validator("port")
-    def validate_port_range(cls, port):  # noqa: N805, pylint: disable=E0213
+    def validate_port_range(cls, port: int) -> int:  # noqa: N805 pylint: disable=E0213
         """Validate port range."""
         if not 1 <= port <= 65535:
             msg = "Port must be in [1, 65535]."
@@ -28,7 +28,7 @@ class Config(BaseModel):
         return port
 
     @validator("level")
-    def validate_level_choice(cls, level):  # noqa: N805, pylint: disable=E0213
+    def validate_level_choice(cls, level: str) -> str:  # noqa: N805 pylint: disable=E0213
         """Validate logging level choice."""
         level = level.upper()
         choices = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
@@ -39,7 +39,7 @@ class Config(BaseModel):
         return level
 
     @validator("backup_path")
-    def validate_backup_path(cls, backup_path):  # noqa: N805, pylint: disable=E0213
+    def validate_backup_path(cls, backup_path: str) -> str:  # noqa: N805 pylint: disable=E0213
         """Validate backup path."""
         if not os.path.isdir(backup_path):
             msg = "Backup path must exists and is a directory."
@@ -48,7 +48,7 @@ class Config(BaseModel):
         return backup_path
 
     @classmethod
-    def load_config(cls, config_file=DEFAULT_CONFIG):
+    def load_config(cls, config_file: str = DEFAULT_CONFIG) -> "Config":
         """Load configuration file and validate it."""
         if not os.path.exists(config_file):
             msg = f"Configuration file: {config_file} not exists."
