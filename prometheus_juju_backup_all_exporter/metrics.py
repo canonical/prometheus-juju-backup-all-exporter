@@ -38,10 +38,13 @@ class MetricBase(ABC):
             old_sample: previous metric sample, useful when implementing counter.
 
         Returns:
-            processed data: list of dictionary containing 'labels' (list of str) and 'value' (float).
+            processed data: list of dictionary containing 'labels' (list of
+            str) and 'value' (float).
 
         Examples:
-            returned_processed_data = [{"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}]
+            returned_processed_data = [
+                {"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}
+            ]
         """
         pass  # pragma: no cover
 

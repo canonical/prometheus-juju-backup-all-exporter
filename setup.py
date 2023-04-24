@@ -10,7 +10,8 @@ configs = {
     "url": "https://github.com/canonical/prometheus-juju-backup-all-exporter",
     "entry_points": {
         "console_scripts": [
-            "prometheus-juju-backup-all-exporter=prometheus_juju_backup_all_exporter.__main__:main",
+            "prometheus-juju-backup-all-exporter="
+            + "prometheus_juju_backup_all_exporter.__main__:main",
         ]
     },
 }

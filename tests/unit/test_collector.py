@@ -15,9 +15,7 @@ class TestCollectorBase(unittest.TestCase):
     """Collector base test class."""
 
     def setUp(self):
-        self.patch_abstract_method = patch.object(
-            CollectorBase, "__abstractmethods__", set()
-        )
+        self.patch_abstract_method = patch.object(CollectorBase, "__abstractmethods__", set())
         self.patch_abstract_method.start()
         mock_metric = Mock()
         mock_metric.__class__ = Mock()

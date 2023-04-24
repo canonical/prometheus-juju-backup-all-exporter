@@ -63,7 +63,9 @@ class CollectorBase(ABC):
             fetched data as a list of dictionary.
 
         Examples:
-            returned_fetched_data = [{"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}]
+            returned_fetched_data = [
+                {"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}
+            ]
         """
         pass  # pragma: no cover
 

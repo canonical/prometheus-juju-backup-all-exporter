@@ -67,9 +67,7 @@ class Exporter(object):
             handler_class=SlientRequestHandler,
         )
         logger.info(
-            "Started promethesus juju-backup-all exporter at {}:{}.".format(
-                self.addr, self.port
-            )
+            "Started promethesus juju-backup-all exporter at {}:{}.".format(self.addr, self.port)
         )
         t = threading.Thread(target=httpd.serve_forever)
         t.daemon = daemon

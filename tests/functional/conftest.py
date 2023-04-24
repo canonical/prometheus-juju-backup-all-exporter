@@ -78,16 +78,9 @@ def setup_snap(snap_name, snap_common_dir, backup_stats_data, backup_state_data)
     if test_snap:
         logging.info("Installing %s snap package...", test_snap)
         assert os.path.isfile(test_snap)
-        assert (
-            check_call(f"sudo snap install --dangerous {test_snap}".split())
-            == 0  # noqa
-        )
-        prepare_sample_data(
-            backup_stats_data, Path(snap_common_dir, "backup_stats.json")
-        )
-        prepare_sample_data(
-            backup_state_data, Path(snap_common_dir, "backup_state.json")
-        )
+        assert check_call(f"sudo snap install --dangerous {test_snap}".split()) == 0  # noqa
+        prepare_sample_data(backup_stats_data, Path(snap_common_dir, "backup_stats.json"))
+        prepare_sample_data(backup_state_data, Path(snap_common_dir, "backup_state.json"))
         assert check_call(f"sudo snap start {snap_name}".split()) == 0
     else:
         logging.error(

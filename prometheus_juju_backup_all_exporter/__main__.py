@@ -27,9 +27,7 @@ def parse_command_line():
         prog=__package__,
         description=__doc__,
     )
-    parser.add_argument(
-        "-c", "--config", help="Set configuration file.", default="", type=str
-    )
+    parser.add_argument("-c", "--config", help="Set configuration file.", default="", type=str)
     args = parser.parse_args()
 
     return args

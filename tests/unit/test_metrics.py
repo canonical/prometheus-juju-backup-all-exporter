@@ -18,9 +18,7 @@ class TestMetricsBase(unittest.TestCase):
     """Metrics base test class."""
 
     def setUp(self):
-        self.patch_abstract_method = patch.object(
-            MetricBase, "__abstractmethods__", set()
-        )
+        self.patch_abstract_method = patch.object(MetricBase, "__abstractmethods__", set())
         self.patch_abstract_method.start()
         self.test_subclass = MetricBase()
 
@@ -35,9 +33,7 @@ class TestMetricsBase(unittest.TestCase):
 
     def test_metric_base_class_add_samples(self):
         """Test metrci base class's add_samples method."""
-        self.test_subclass._process = Mock(
-            return_value=[{"labels": [Mock()], "value": Mock()}]
-        )
+        self.test_subclass._process = Mock(return_value=[{"labels": [Mock()], "value": Mock()}])
         self.test_subclass.add_metric = Mock()
 
         self.test_subclass.add_samples(Mock(), Mock())
@@ -53,9 +49,7 @@ class TestMetricsBase(unittest.TestCase):
         sample = Sample(name, labels, value)
         self.test_subclass.samples = [sample]
 
-        assert list(self.test_subclass.previous_data.keys())[0] == tuple(
-            labels.values()
-        )
+        assert list(self.test_subclass.previous_data.keys())[0] == tuple(labels.values())
         assert list(self.test_subclass.previous_data.values())[0] == value
 
 
@@ -94,9 +88,7 @@ class TestCustomMetrics:
         old_sample = {tuple(labels): pre_value}
         metric_data = [{"labels": labels, "value": value}]
         expected_metric_data = [{"labels": labels, "value": value + pre_value}]
-        returned_data = purged_metric._process(
-            {"purged_metric": metric_data}, old_sample
-        )
+        returned_data = purged_metric._process({"purged_metric": metric_data}, old_sample)
         assert returned_data == expected_metric_data
 
     def test_backup_failed_metric(self):
@@ -117,9 +109,7 @@ class TestCustomMetrics:
         old_sample = {tuple(labels): pre_value}
         metric_data = [{"labels": labels, "value": value}]
         expected_metric_data = [{"labels": labels, "value": value + pre_value}]
-        returned_data = failed_metric._process(
-            {"failed_metric": metric_data}, old_sample
-        )
+        returned_data = failed_metric._process({"failed_metric": metric_data}, old_sample)
         assert returned_data == expected_metric_data
 
     def test_backup_completed_metric(self):
@@ -140,7 +130,5 @@ class TestCustomMetrics:
         old_sample = {tuple(labels): pre_value}
         metric_data = [{"labels": labels, "value": value}]
         expected_metric_data = [{"labels": labels, "value": value + pre_value}]
-        returned_data = completed_metric._process(
-            {"completed_metric": metric_data}, old_sample
-        )
+        returned_data = completed_metric._process({"completed_metric": metric_data}, old_sample)
         assert returned_data == expected_metric_data
