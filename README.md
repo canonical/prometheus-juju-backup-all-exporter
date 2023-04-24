@@ -6,6 +6,18 @@ metrics are expected to be used with prometheus.
 
 ## Getting Started
 
+Install the snap from snap store:
+
+```bash
+$ sudo snap install prometheus-juju-backup-all-exporter
+```
+
+Start the exporter:
+
+```bash
+$ sudo snap start prometheus-juju-backup-all-exporter
+```
+
 ## Snap Configuration
 
 The install hook (`./snap/hooks/install`) will generate a default configuration
