@@ -6,13 +6,6 @@ import logging
 from .collector import BackupStateCollector, BackupStatsCollector
 from .config import DEFAULT_CONFIG, Config
 from .exporter import Exporter
-from .metrics import (
-    BackupCompletedMetric,
-    BackupDurationMetric,
-    BackupFailedMetric,
-    BackupPurgedMetric,
-    BackupStatusOKMetric,
-)
 
 root_logger = logging.getLogger()
 
@@ -42,41 +35,8 @@ def main() -> None:
     root_logger.setLevel(logging.getLevelName(config.level))
 
     exporter = Exporter(config.port)
-    exporter.register(
-        BackupStatsCollector(
-            config,
-            BackupDurationMetric(
-                "juju_backup_all_command_duration_seconds",
-                "Length of time the charm-juju-backup-all backup command took.",
-                labels=["status_ok", "result_code"],
-            ),
-            BackupStatusOKMetric(
-                "juju_backup_all_command_ok_info",
-                "Indicates whether or not the charm-juju-backup-all backup command was a success.",
-                labels=["result_code"],
-            ),
-        )
-    )
-    exporter.register(
-        BackupStateCollector(
-            config,
-            BackupFailedMetric(
-                "juju_backup_all_backup_failed_total",
-                "The number of failed backups.",
-                labels=[],
-            ),
-            BackupPurgedMetric(
-                "juju_backup_all_backup_purged_total",
-                "The number of purged backups.",
-                labels=[],
-            ),
-            BackupCompletedMetric(
-                "juju_backup_all_backup_completed_total",
-                "The number of completed backups.",
-                labels=[],
-            ),
-        )
-    )
+    exporter.register(BackupStatsCollector(config))
+    exporter.register(BackupStateCollector(config))
     exporter.run()
 
 
