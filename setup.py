@@ -1,3 +1,5 @@
+"""Entrypoint for python package."""
+
 from setuptools import setup
 
 configs = {
@@ -10,15 +12,16 @@ configs = {
     "url": "https://github.com/canonical/prometheus-juju-backup-all-exporter",
     "entry_points": {
         "console_scripts": [
-            "prometheus-juju-backup-all-exporter=prometheus_juju_backup_all_exporter.__main__:main",
+            "prometheus-juju-backup-all-exporter="
+            + "prometheus_juju_backup_all_exporter.__main__:main",
         ]
     },
 }
 
-with open("LICENSE") as f:
+with open("LICENSE", encoding="utf-8") as f:
     configs.update({"license": f.read()})
 
-with open("README.md") as f:
+with open("README.md", encoding="utf-8") as f:
     configs.update({"long_description": f.read()})
 
 

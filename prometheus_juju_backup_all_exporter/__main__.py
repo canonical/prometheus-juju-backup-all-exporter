@@ -1,3 +1,5 @@
+"""Package entrypoint."""
+
 import argparse
 import logging
 
@@ -15,7 +17,7 @@ from .metrics import (
 root_logger = logging.getLogger()
 
 
-def parse_command_line():
+def parse_command_line() -> argparse.Namespace:
     """Command line parser.
 
     Parse command line arguments and return the arguments.
@@ -27,15 +29,14 @@ def parse_command_line():
         prog=__package__,
         description=__doc__,
     )
-    parser.add_argument(
-        "-c", "--config", help="Set configuration file.", default="", type=str
-    )
+    parser.add_argument("-c", "--config", help="Set configuration file.", default="", type=str)
     args = parser.parse_args()
 
     return args
 
 
-def main():
+def main() -> None:
+    """Start the prometheus-juju-backup-all exporter."""
     args = parse_command_line()
     config = Config.load_config(config_file=args.config or DEFAULT_CONFIG)
     root_logger.setLevel(logging.getLevelName(config.level))

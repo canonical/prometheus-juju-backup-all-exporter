@@ -1,12 +1,19 @@
-from abc import ABC, abstractmethod
-from logging import getLogger
+"""Module for j-b-a collecter."""
 
+from abc import abstractmethod
+from logging import getLogger
+from typing import Any, Dict, Iterator, List, Optional
+
+from prometheus_client.metrics_core import Metric
+from prometheus_client.registry import Collector
+
+from .config import Config
 from .utils import BackupState, BackupStats, get_result_code_name
 
 logger = getLogger(__name__)
 
 
-class CollectorBase(ABC):
+class CollectorBase(Collector):  # pylint: disable=R0903
     """Abstract base class for creating custom collector.
 
     All collector classes should add this class as a mixin class, and you
@@ -27,10 +34,12 @@ class CollectorBase(ABC):
             super().__init__(*metrics)
 
         def _fetch(self):
-            data = [
+            data = {
+                "some_metric": [
                     {"labels": ["mongodb"], "value": 20},
                     {"labels": ["juju-backup-all"], "value": 10}
                 ]
+            }
             return data
 
     exporter = Exporter(config.port)
@@ -47,7 +56,7 @@ class CollectorBase(ABC):
     ```
     """
 
-    def __init__(self, *metrics):
+    def __init__(self, *metrics: Any) -> None:
         """Initialze the collector.
 
         Args:
@@ -56,18 +65,22 @@ class CollectorBase(ABC):
         self._metrics = metrics
 
     @abstractmethod
-    def _fetch(self):
+    def _fetch(self) -> Optional[Dict[str, List[Dict[str, Any]]]]:
         """User defined _fetch method used by `self._update_metrics()`.
 
         Return:
-            fetched data as a list of dictionary.
+            fetched data as metric samples
 
         Examples:
-            returned_fetched_data = [{"label": [], "value": 10.0}, {"label": ["foo"], "value": 20.0}]
+            returned_fetched_data = {
+                "some_metric": [
+                    {"label": [], "value": 10.0},
+                    {"label": ["foo"], "value": 20.0},
+                ]
+            }
         """
-        pass  # pragma: no cover
 
-    def _update_metrics(self):
+    def _update_metrics(self) -> None:
         """Create new metrics based on existing metrics.
 
         This is an internally used function to fetch new samples from the user
@@ -79,13 +92,15 @@ class CollectorBase(ABC):
         new_metrics = []
         for metric in self._metrics:
             new_metric = metric.__class__(
-                metric.name, metric.documentation, labels=metric._labelnames
+                metric.name,
+                metric.documentation,
+                labels=metric._labelnames,  # pylint: disable=W0212
             )
             new_metric.add_samples(data, metric.previous_data)
             new_metrics.append(new_metric)
-        self._metrics = new_metrics
+        self._metrics = tuple(new_metrics)
 
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         """Fetch data and update the internal metrics.
 
         This is a callback method that is used internally within
@@ -100,13 +115,15 @@ class CollectorBase(ABC):
             yield metric
 
 
-class BackupStateCollector(CollectorBase):
-    def __init__(self, config, *metrics):
+class BackupStateCollector(CollectorBase):  # pylint: disable=R0903
+    """Collector for backup state."""
+
+    def __init__(self, config: Config, *metrics: Metric) -> None:
         """Initialize the class."""
         super().__init__(*metrics)
         self.config = config
 
-    def _fetch(self):
+    def _fetch(self) -> Dict[str, List[Dict[str, Any]]]:
         """User defined _fetch method used by `self._update_metrics()`."""
         backup_state = BackupState(self.config)
         return {
@@ -122,13 +139,15 @@ class BackupStateCollector(CollectorBase):
         }
 
 
-class BackupStatsCollector(CollectorBase):
-    def __init__(self, config, *metrics):
+class BackupStatsCollector(CollectorBase):  # pylint: disable=R0903
+    """Collector for backup stats."""
+
+    def __init__(self, config: Config, *metrics: Metric) -> None:
         """Initialize the class."""
         super().__init__(*metrics)
         self.config = config
 
-    def _fetch(self):
+    def _fetch(self) -> Dict[str, List[Dict[str, Any]]]:
         """User defined _fetch method used by `self._update_metrics()`."""
         backup_stats = BackupStats(self.config)
         return {
