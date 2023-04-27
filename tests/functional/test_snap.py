@@ -59,8 +59,8 @@ def test_backup_stats_collector(backup_stats_data):
         assert float(match_group[1]) == backup_stats_data[k]
 
 
-def test_backup_state_collector(backup_state_data):
-    """Check if backup state collector is working properly."""
+def test_backup_event_collector(backup_event_data):
+    """Check if backup event collector is working properly."""
     result = run("curl http://localhost:10000", shell=True, capture_output=True)
     assert result.returncode == 0
 
@@ -75,4 +75,4 @@ def test_backup_state_collector(backup_state_data):
         assert match is not None and isinstance(match.group(), str)
         match_group = match.group().split()
         assert len(match_group) == 2
-        assert float(match_group[1]) == backup_state_data[k]
+        assert float(match_group[1]) == backup_event_data[k]

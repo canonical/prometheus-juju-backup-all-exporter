@@ -3,7 +3,7 @@
 import argparse
 import logging
 
-from .collector import BackupStateCollector, BackupStatsCollector
+from .collector import BackupEventCollector, BackupStatsCollector
 from .config import DEFAULT_CONFIG, Config
 from .exporter import Exporter
 
@@ -36,7 +36,7 @@ def main() -> None:
 
     exporter = Exporter(config.port)
     exporter.register(BackupStatsCollector(config))
-    exporter.register(BackupStateCollector(config))
+    exporter.register(BackupEventCollector(config))
     exporter.run()
 
 
