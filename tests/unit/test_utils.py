@@ -5,7 +5,7 @@ import pytest
 
 from prometheus_juju_backup_all_exporter import config, utils
 from prometheus_juju_backup_all_exporter.utils import (
-    BackupState,
+    BackupEvent,
     BackupStats,
     get_result_code_name,
 )
@@ -82,8 +82,8 @@ class TestBackupStats(unittest.TestCase):
         self.assertEqual(backup_stats.result_code, result_code)
 
 
-class TestBackupState(unittest.TestCase):
-    """BackupState test class."""
+class TestBackupEvent(unittest.TestCase):
+    """BackupEvent test class."""
 
     @classmethod
     def setUpClass(cls):
@@ -95,33 +95,33 @@ class TestBackupState(unittest.TestCase):
         cls.patch_open.stop()
 
     @patch.object(config, "Config")
-    def test_backup_state_not_exists(self, mock_config):
-        """Test backup state not exists."""
+    def test_backup_event_not_exists(self, mock_config):
+        """Test backup event not exists."""
         mock_config.backup_path = "random"
-        backup_state = BackupState(mock_config)
-        self.assertEqual(backup_state.failed, utils.DEFAULT_FAILED)
-        self.assertEqual(backup_state.purged, utils.DEFAULT_PURGED)
-        self.assertEqual(backup_state.completed, utils.DEFAULT_COMPLETED)
+        backup_event = BackupEvent(mock_config)
+        self.assertEqual(backup_event.failed, utils.DEFAULT_FAILED)
+        self.assertEqual(backup_event.purged, utils.DEFAULT_PURGED)
+        self.assertEqual(backup_event.completed, utils.DEFAULT_COMPLETED)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
     @patch.object(config, "Config")
-    def test_backup_state_error(self, mock_config, mock_json_load, mock_pathlib_path):
-        """Test backup state error."""
+    def test_backup_event_error(self, mock_config, mock_json_load, mock_pathlib_path):
+        """Test backup event error."""
         mock_path = Mock()
         mock_path.exists.return_value = True
         mock_pathlib_path.return_value = mock_path
         mock_json_load.return_value = {"random_data": 123}
-        backup_state = BackupState(mock_config)
-        self.assertEqual(backup_state.failed, utils.DEFAULT_FAILED)
-        self.assertEqual(backup_state.purged, utils.DEFAULT_PURGED)
-        self.assertEqual(backup_state.completed, utils.DEFAULT_COMPLETED)
+        backup_event = BackupEvent(mock_config)
+        self.assertEqual(backup_event.failed, utils.DEFAULT_FAILED)
+        self.assertEqual(backup_event.purged, utils.DEFAULT_PURGED)
+        self.assertEqual(backup_event.completed, utils.DEFAULT_COMPLETED)
 
     @patch.object(utils, "Path")
     @patch.object(utils.json, "load")
     @patch.object(config, "Config")
-    def test_backup_state_success(self, mock_config, mock_json_load, mock_pathlib_path):
-        """Test backup state success."""
+    def test_backup_event_success(self, mock_config, mock_json_load, mock_pathlib_path):
+        """Test backup event success."""
         mock_path = Mock()
         mock_path.exists.return_value = True
         mock_pathlib_path.return_value = mock_path
@@ -133,7 +133,7 @@ class TestBackupState(unittest.TestCase):
             "failed": failed,
             "purged": purged,
         }
-        backup_state = BackupState(mock_config)
-        self.assertEqual(backup_state.failed, failed)
-        self.assertEqual(backup_state.purged, purged)
-        self.assertEqual(backup_state.completed, completed)
+        backup_event = BackupEvent(mock_config)
+        self.assertEqual(backup_event.failed, failed)
+        self.assertEqual(backup_event.purged, purged)
+        self.assertEqual(backup_event.completed, completed)

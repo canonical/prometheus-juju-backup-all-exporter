@@ -18,7 +18,7 @@ DEFAULT_COMPLETED = 0
 
 
 def get_result_code_name(result_code: int) -> str:
-    """Map result_code to nagio-like string."""
+    """Map result_code to Nagios-like string."""
     result_code = int(result_code)
     status_name = {
         0: "StatusOK",
@@ -73,37 +73,37 @@ class BackupStats:
         return self._result_code
 
 
-class BackupState:
-    """A class representing backup state file."""
+class BackupEvent:
+    """A class representing backup event file."""
 
     def __init__(self, config: Config) -> None:
         """Initialize and set instance properties."""
         self._failed = DEFAULT_FAILED
         self._purged = DEFAULT_PURGED
         self._completed = DEFAULT_COMPLETED
-        state_file = Path(config.backup_path, "backup_state.json")
+        event_file = Path(config.backup_path, "backup_state.json")
         try:
-            if not state_file.exists():
+            if not event_file.exists():
                 logger.warning(
-                    "Backup state file: %s does not exist, using default values.",
-                    str(state_file),
+                    "Backup event file: %s does not exist, using default values.",
+                    str(event_file),
                 )
             else:
-                with open(state_file, "r", encoding="utf-8") as state:
-                    backup_state = json.load(state)
-                    self._failed = backup_state["failed"]
-                    self._purged = backup_state["purged"]
-                    self._completed = backup_state["completed"]
+                with open(event_file, "r", encoding="utf-8") as event:
+                    backup_event = json.load(event)
+                    self._failed = backup_event["failed"]
+                    self._purged = backup_event["purged"]
+                    self._completed = backup_event["completed"]
         except (KeyError, PermissionError, json.decoder.JSONDecodeError) as err:
             logger.error(
-                "Invalid backup state file: %s. %s. Using default values.",
-                str(state_file),
+                "Invalid backup event file: %s. %s. Using default values.",
+                str(event_file),
                 str(err),
             )
         finally:
-            if state_file.exists():
-                logger.info("Removing state file: %s.", str(state_file))
-                state_file.unlink()
+            if event_file.exists():
+                logger.info("Removing event file: %s.", str(event_file))
+                event_file.unlink()
 
     @property
     def completed(self) -> int:

@@ -5,18 +5,18 @@ from typing import Dict, List
 
 from prometheus_client.metrics_core import CounterMetricFamily, GaugeMetricFamily
 
-from .core import Payload, Specification, SyncCollector
-from .utils import BackupState, BackupStats, get_result_code_name
+from .core import BlockingCollector, Payload, Specification
+from .utils import BackupEvent, BackupStats, get_result_code_name
 
 logger = getLogger(__name__)
 
 
-class BackupStateCollector(SyncCollector):
-    """Collector for backup state."""
+class BackupEventCollector(BlockingCollector):
+    """Collector for backup event."""
 
     @property
     def specifications(self) -> List[Specification]:
-        """Backup state metrics specs."""
+        """Backup event metrics specs."""
         return [
             Specification(
                 name="juju_backup_all_backup_failed_total",
@@ -39,35 +39,35 @@ class BackupStateCollector(SyncCollector):
         ]
 
     def fetch(self) -> List[Payload]:
-        """Load the backup state data."""
-        backup_state = BackupState(self.config)
+        """Load the backup event data."""
+        backup_event = BackupEvent(self.config)
         return [
             Payload(
                 name="juju_backup_all_backup_failed_total",
                 labels=[],
-                value=float(backup_state.failed),
+                value=float(backup_event.failed),
             ),
             Payload(
                 name="juju_backup_all_backup_purged_total",
                 labels=[],
-                value=float(backup_state.purged),
+                value=float(backup_event.purged),
             ),
             Payload(
                 name="juju_backup_all_backup_completed_total",
                 labels=[],
-                value=float(backup_state.completed),
+                value=float(backup_event.completed),
             ),
         ]
 
     def process(self, payloads: List[Payload], datastore: Dict[str, Payload]) -> List[Payload]:
-        """Process the backup state data."""
+        """Process the backup event data."""
         # Increments the counter according to the payload.
         for payload in payloads:
             payload.value += datastore[payload.uuid].value
         return payloads
 
 
-class BackupStatsCollector(SyncCollector):
+class BackupStatsCollector(BlockingCollector):
     """Collector for backup stats."""
 
     @property

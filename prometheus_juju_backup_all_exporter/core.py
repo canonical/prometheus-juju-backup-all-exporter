@@ -37,8 +37,13 @@ class Specification:
     metric_class: Type[Metric]
 
 
-class SyncCollector(Collector):
-    """Base class for synchronous collector."""
+class BlockingCollector(Collector):
+    """Base class for blocking collector.
+
+    BlockingCollector base class is intended to be used when the collector is
+    fetching data in a blocking fashion. For example, if the fetching process
+    is reading data from files.
+    """
 
     def __init__(self, config: Config) -> None:
         """Initialize the class."""

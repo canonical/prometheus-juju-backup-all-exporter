@@ -4,14 +4,14 @@ from unittest.mock import Mock, patch
 import pytest
 
 from prometheus_juju_backup_all_exporter.core import (
+    BlockingCollector,
     Payload,
     Specification,
-    SyncCollector,
 )
 
 
-class TestSyncCollector(unittest.TestCase):
-    """SyncCollector test class."""
+class TestBlockingCollector(unittest.TestCase):
+    """BlockingCollector test class."""
 
     def setUp(self):
         self.mock_payloads = [Payload(name="abc", labels=[], value=0)]
@@ -22,15 +22,15 @@ class TestSyncCollector(unittest.TestCase):
     def test_cannot_init_collector_base(self):
         """Test cannot initialize CollectorBase."""
         with pytest.raises(TypeError):
-            SyncCollector()
+            BlockingCollector()
 
-    @patch.multiple(SyncCollector, __abstractmethods__=set())
+    @patch.multiple(BlockingCollector, __abstractmethods__=set())
     def test_sync_collector_class_collect(self):
         """Test sync collector class's collect method."""
-        SyncCollector.fetch = Mock(return_value=self.mock_payloads)
-        SyncCollector.process = Mock(return_value=self.mock_payloads)
-        SyncCollector.specifications = self.mock_specifications
-        self.test_subclass = SyncCollector(Mock())
+        BlockingCollector.fetch = Mock(return_value=self.mock_payloads)
+        BlockingCollector.process = Mock(return_value=self.mock_payloads)
+        BlockingCollector.specifications = self.mock_specifications
+        self.test_subclass = BlockingCollector(Mock())
         list(self.test_subclass.collect())  # need list() because it's a generator
         self.test_subclass.fetch.assert_called()
         self.test_subclass.process.assert_called()

@@ -45,7 +45,7 @@ def backup_stats_data():
 
 
 @pytest.fixture(scope="session")
-def backup_state_data():
+def backup_event_data():
     return {
         "failed": random.randint(0, 10),
         "purged": random.randint(0, 10),
@@ -69,7 +69,7 @@ def snap_common_dir(snap_name):
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_snap(snap_name, snap_common_dir, backup_stats_data, backup_state_data):
+def setup_snap(snap_name, snap_common_dir, backup_stats_data, backup_event_data):
     """Install the package to the system and cleanup afterwards.
 
     Note: an environment variable TEST_SNAP is needed to install the snap.
@@ -80,7 +80,7 @@ def setup_snap(snap_name, snap_common_dir, backup_stats_data, backup_state_data)
         assert os.path.isfile(test_snap)
         assert check_call(f"sudo snap install --dangerous {test_snap}".split()) == 0  # noqa
         prepare_sample_data(backup_stats_data, Path(snap_common_dir, "backup_stats.json"))
-        prepare_sample_data(backup_state_data, Path(snap_common_dir, "backup_state.json"))
+        prepare_sample_data(backup_event_data, Path(snap_common_dir, "backup_state.json"))
         assert check_call(f"sudo snap start {snap_name}".split()) == 0
     else:
         logging.error(
