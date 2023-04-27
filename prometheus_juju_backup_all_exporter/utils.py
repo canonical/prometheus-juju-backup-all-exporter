@@ -82,18 +82,19 @@ class BackupEvent:
         self._purged = DEFAULT_PURGED
         self._completed = DEFAULT_COMPLETED
         event_file = Path(config.backup_path, "backup_state.json")
+        if not event_file.exists():
+            logger.warning(
+                "Backup event file: %s does not exist, using default values.",
+                str(event_file),
+            )
+            return
+
         try:
-            if not event_file.exists():
-                logger.warning(
-                    "Backup event file: %s does not exist, using default values.",
-                    str(event_file),
-                )
-            else:
-                with open(event_file, "r", encoding="utf-8") as event:
-                    backup_event = json.load(event)
-                    self._failed = backup_event["failed"]
-                    self._purged = backup_event["purged"]
-                    self._completed = backup_event["completed"]
+            with open(event_file, "r", encoding="utf-8") as event:
+                backup_event = json.load(event)
+                self._failed = backup_event["failed"]
+                self._purged = backup_event["purged"]
+                self._completed = backup_event["completed"]
         except (KeyError, PermissionError, json.decoder.JSONDecodeError) as err:
             logger.error(
                 "Invalid backup event file: %s. %s. Using default values.",
@@ -101,9 +102,8 @@ class BackupEvent:
                 str(err),
             )
         finally:
-            if event_file.exists():
-                logger.info("Removing event file: %s.", str(event_file))
-                event_file.unlink()
+            logger.info("Removing event file: %s.", str(event_file))
+            event_file.unlink()
 
     @property
     def completed(self) -> int:
