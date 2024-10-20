@@ -4,9 +4,9 @@ adopt-info: prometheus-juju-backup-all-exporter
 summary: collects backup results and exports them as metrics
 description: |
   The prometheus-juju-backup-all-exporter is a snap for collecting backup
-  results from charm-juju-backup-all, and export those results as prometheus
-  metrics. The metrics are expected to be used with prometheus.
-
+  results from charm-juju-backup-all, and exporting those results as Prometheus
+  metrics. The metrics are expected to be used with Prometheus. The exporter
+  service currently only supports HTTP, so the communication is not encrypted.
 grade: stable
 confinement: strict
 
