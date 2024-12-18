@@ -57,7 +57,7 @@ choose the following two backends:
 To build the snap:
 
 ```bash
-$ make build
+$ snapcraft --use-lxd
 ```
 
 To try the snap that was built, you can install it locally:
