@@ -3,11 +3,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from prometheus_juju_backup_all_exporter.core import (
-    BlockingCollector,
-    Payload,
-    Specification,
-)
+from prometheus_juju_backup_all_exporter.core import BlockingCollector, Payload, Specification
 
 
 class TestBlockingCollector(unittest.TestCase):
