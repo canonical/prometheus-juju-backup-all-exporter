@@ -24,7 +24,10 @@ parts:
     source: .
     plugin: python
     python-requirements: [./requirements.txt]
+    build-packages: # required for finding version
+      - python3-setuptools-scm
     override-build: |
-      snapcraftctl build
-      echo "Version: $(python3 setup.py --version)"
-      snapcraftctl set-version "$(python3 setup.py --version)"
+      VERSION="$(python3 -m setuptools_scm)"
+      echo "Version: $VERSION"
+      craftctl default
+      craftctl set version="$VERSION"
